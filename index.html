@@ -3,17 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 사주 보기</title>
+  <title>로또 번호 추첨기</title>
 
   <style>
     :root {
       --bg-gradient: linear-gradient(135deg,#1e1b4b,#312e81,#0f172a);
       --container-bg: rgba(255,255,255,0.08);
       --text-color: white;
-      --input-bg: rgba(255,255,255,0.1);
       --border-color: rgba(255,255,255,0.15);
-      --placeholder-color: rgba(255,255,255,0.5);
-      --tag-bg: rgba(255,255,255,0.12);
       --shadow: 0 10px 40px rgba(0,0,0,0.4);
     }
 
@@ -21,10 +18,7 @@
       --bg-gradient: linear-gradient(135deg,#f3f4f6,#e5e7eb,#d1d5db);
       --container-bg: rgba(255,255,255,0.9);
       --text-color: #1f2937;
-      --input-bg: rgba(0,0,0,0.05);
       --border-color: rgba(0,0,0,0.1);
-      --placeholder-color: rgba(0,0,0,0.4);
-      --tag-bg: rgba(0,0,0,0.08);
       --shadow: 0 10px 40px rgba(0,0,0,0.1);
     }
 
@@ -53,9 +47,10 @@
       backdrop-filter: blur(12px);
       border:1px solid var(--border-color);
       border-radius:24px;
-      padding:32px;
+      padding:40px 32px;
       box-shadow: var(--shadow);
       position: relative;
+      text-align: center;
     }
 
     .theme-toggle {
@@ -74,106 +69,96 @@
       align-items: center;
       justify-content: center;
       font-size: 18px;
-      margin-top: 0;
     }
 
     h1{
-      text-align:center;
       font-size:32px;
       margin-bottom:8px;
     }
 
     .subtitle{
-      text-align:center;
       opacity:0.8;
-      margin-bottom:28px;
+      margin-bottom:32px;
       font-size:14px;
     }
 
-    .input-group{
-      margin-bottom:18px;
+    .lotto-display {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+      min-height: 60px;
     }
 
-    label{
-      display:block;
-      margin-bottom:8px;
-      font-size:14px;
-      opacity:0.9;
+    .ball {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     }
 
-    input, select{
-      width:100%;
-      padding:14px;
-      border:1px solid var(--border-color);
-      border-radius:14px;
-      background: var(--input-bg);
-      color: var(--text-color);
-      font-size:15px;
-      outline:none;
+    @keyframes bounceIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    input::placeholder{
-      color: var(--placeholder-color);
+    /* Ball Colors based on number ranges */
+    .ball-1-10 { background: radial-gradient(circle at 30% 30%, #facc15, #ca8a04); }
+    .ball-11-20 { background: radial-gradient(circle at 30% 30%, #60a5fa, #2563eb); }
+    .ball-21-30 { background: radial-gradient(circle at 30% 30%, #f87171, #dc2626); }
+    .ball-31-40 { background: radial-gradient(circle at 30% 30%, #9ca3af, #4b5563); }
+    .ball-41-45 { background: radial-gradient(circle at 30% 30%, #4ade80, #16a34a); }
+
+    .main-btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg,#6366f1,#a855f7);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s;
     }
 
-    button.main-btn{
-      width:100%;
-      padding:16px;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(135deg,#f59e0b,#ef4444);
-      color:white;
-      font-size:16px;
-      font-weight:bold;
-      cursor:pointer;
-      transition:0.25s;
-      margin-top:10px;
+    .main-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
     }
 
-    button.main-btn:hover{
-      transform:translateY(-2px);
-      opacity:0.95;
+    .main-btn:active {
+      transform: translateY(0);
     }
 
-    .result{
-      margin-top:28px;
-      background: var(--container-bg);
-      padding:22px;
-      border-radius:18px;
-      line-height:1.8;
-      display:none;
-      animation:fade 0.5s ease;
-      border: 1px solid var(--border-color);
+    .history {
+      margin-top: 30px;
+      text-align: left;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
     }
 
-    .fortune-title{
-      font-size:22px;
-      margin-bottom:14px;
-      color:#fcd34d;
+    .history h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      opacity: 0.9;
     }
 
-    [data-theme="light"] .fortune-title {
-      color: #b45309;
-    }
-
-    @keyframes fade{
-      from{
-        opacity:0;
-        transform:translateY(10px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
-    }
-
-    .tag{
-      display:inline-block;
-      padding:6px 12px;
-      border-radius:999px;
-      background: var(--tag-bg);
-      margin:4px;
-      font-size:13px;
+    .history-item {
+      font-size: 14px;
+      opacity: 0.7;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
     }
   </style>
 </head>
@@ -182,35 +167,18 @@
 
   <div class="container">
     <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
-    <h1>🔮 AI 사주 보기</h1>
-    <p class="subtitle">생년월일을 입력하면 간단한 운세를 알려드립니다</p>
+    <h1>🍀 로또 추첨기</h1>
+    <p class="subtitle">오늘의 행운의 번호를 뽑아보세요!</p>
 
-    <div class="input-group">
-      <label>이름</label>
-      <input type="text" id="name" placeholder="홍길동">
+    <div class="lotto-display" id="lotto-display">
+      <!-- Numbers will appear here -->
     </div>
 
-    <div class="input-group">
-      <label>생년월일</label>
-      <input type="date" id="birth">
-    </div>
+    <button class="main-btn" onclick="drawLotto()">번호 추첨하기</button>
 
-    <div class="input-group">
-      <label>성별</label>
-      <select id="gender">
-        <option value="남성">남성</option>
-        <option value="여성">여성</option>
-      </select>
-    </div>
-
-    <button class="main-btn" onclick="showFortune()">사주 보기</button>
-
-    <div class="result" id="result">
-      <div class="fortune-title">✨ 오늘의 사주 결과</div>
-
-      <div id="tags"></div>
-
-      <p id="fortuneText"></p>
+    <div class="history" id="history-section" style="display: none;">
+      <h3>최근 추첨 이력</h3>
+      <div id="history-list"></div>
     </div>
   </div>
 
@@ -238,58 +206,52 @@
 
     initTheme();
 
-    function showFortune(){
+    function getBallClass(num) {
+      if (num <= 10) return 'ball-1-10';
+      if (num <= 20) return 'ball-11-20';
+      if (num <= 30) return 'ball-21-30';
+      if (num <= 40) return 'ball-31-40';
+      return 'ball-41-45';
+    }
 
-      const name = document.getElementById('name').value;
+    function drawLotto() {
+      const display = document.getElementById('lotto-display');
+      display.innerHTML = '';
+      
+      const numbers = [];
+      while (numbers.length < 6) {
+        const num = Math.floor(Math.random() * 45) + 1;
+        if (!numbers.includes(num)) {
+          numbers.push(num);
+        }
       }
+      numbers.sort((a, b) => a - b);
 
-      const fortunes = [
-        "강한 추진력을 가진 사주입니다. 올해는 새로운 도전에서 좋은 기회가 들어옵니다.",
-        "사람들과의 인연운이 강합니다. 인간관계에서 뜻밖의 행운이 찾아올 수 있습니다.",
-        "금전운이 상승하는 흐름입니다. 작은 기회를 잘 잡으면 큰 성과로 이어집니다.",
-        "감정 기복이 있지만 예술적 감각과 창의성이 뛰어난 타입입니다.",
-        "꾸준함이 강점인 사주입니다. 늦게 성공하지만 크게 안정되는 운입니다.",
-        "리더십이 강하며 주변 사람들에게 영향력을 주는 기운이 있습니다."
-      ];
+      numbers.forEach((num, index) => {
+        setTimeout(() => {
+          const ball = document.createElement('div');
+          ball.className = `ball ${getBallClass(num)}`;
+          ball.innerText = num;
+          display.appendChild(ball);
+        }, index * 150);
+      });
 
-      const luckyColors = [
-        "💙 파란색",
-        "❤️ 빨간색",
-        "💚 초록색",
-        "🖤 검정색",
-        "💛 노란색"
-      ];
+      // Update history
+      setTimeout(() => {
+        const historySection = document.getElementById('history-section');
+        const historyList = document.getElementById('history-list');
+        historySection.style.display = 'block';
 
-      const luckyItems = [
-        "반지",
-        "향수",
-        "노트",
-        "시계",
-        "이어폰"
-      ];
-
-      const randomFortune =
-        fortunes[Math.floor(Math.random() * fortunes.length)];
-
-      const randomColor =
-        luckyColors[Math.floor(Math.random() * luckyColors.length)];
-
-      const randomItem =
-        luckyItems[Math.floor(Math.random() * luckyItems.length)];
-
-      document.getElementById('result').style.display = 'block';
-
-      document.getElementById('tags').innerHTML = `
-        <span class="tag">${gender}</span>
-        <span class="tag">행운의 색: ${randomColor}</span>
-        <span class="tag">행운의 아이템: ${randomItem}</span>
-      `;
-
-      document.getElementById('fortuneText').innerHTML = `
-        <b>${name}</b>님의 사주를 분석한 결과,<br><br>
-        ${randomFortune}<br><br>
-        올해는 특히 인간관계와 자기계발에 집중하면 좋은 흐름을 탈 가능성이 높습니다.
-      `;
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        const now = new Date().toLocaleTimeString();
+        historyItem.innerHTML = `<span>${numbers.join(', ')}</span> <span>${now}</span>`;
+        
+        historyList.insertBefore(historyItem, historyList.firstChild);
+        if (historyList.children.length > 5) {
+          historyList.removeChild(historyList.lastChild);
+        }
+      }, 1000);
     }
   </script>
 
