@@ -1,14 +1,231 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+  <title>AI 사주 보기</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Pretendard', sans-serif;
+    }
+
+    body{
+      background: linear-gradient(135deg,#1e1b4b,#312e81,#0f172a);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      padding:30px;
+    }
+
+    .container{
+      width:100%;
+      max-width:520px;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      border:1px solid rgba(255,255,255,0.15);
+      border-radius:24px;
+      padding:32px;
+      box-shadow:0 10px 40px rgba(0,0,0,0.4);
+    }
+
+    h1{
+      text-align:center;
+      font-size:32px;
+      margin-bottom:8px;
+    }
+
+    .subtitle{
+      text-align:center;
+      opacity:0.8;
+      margin-bottom:28px;
+      font-size:14px;
+    }
+
+    .input-group{
+      margin-bottom:18px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-size:14px;
+      opacity:0.9;
+    }
+
+    input, select{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:14px;
+      background:rgba(255,255,255,0.1);
+      color:white;
+      font-size:15px;
+      outline:none;
+    }
+
+    input::placeholder{
+      color:rgba(255,255,255,0.5);
+    }
+
+    button{
+      width:100%;
+      padding:16px;
+      border:none;
+      border-radius:16px;
+      background:linear-gradient(135deg,#f59e0b,#ef4444);
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.25s;
+      margin-top:10px;
+    }
+
+    button:hover{
+      transform:translateY(-2px);
+      opacity:0.95;
+    }
+
+    .result{
+      margin-top:28px;
+      background:rgba(255,255,255,0.08);
+      padding:22px;
+      border-radius:18px;
+      line-height:1.8;
+      display:none;
+      animation:fade 0.5s ease;
+    }
+
+    .fortune-title{
+      font-size:22px;
+      margin-bottom:14px;
+      color:#fcd34d;
+    }
+
+    @keyframes fade{
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    .tag{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.12);
+      margin:4px;
+      font-size:13px;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+
+  <div class="container">
+    <h1>🔮 AI 사주 보기</h1>
+    <p class="subtitle">생년월일을 입력하면 간단한 운세를 알려드립니다</p>
+
+    <div class="input-group">
+      <label>이름</label>
+      <input type="text" id="name" placeholder="홍길동">
+    </div>
+
+    <div class="input-group">
+      <label>생년월일</label>
+      <input type="date" id="birth">
+    </div>
+
+    <div class="input-group">
+      <label>성별</label>
+      <select id="gender">
+        <option value="남성">남성</option>
+        <option value="여성">여성</option>
+      </select>
+    </div>
+
+    <button onclick="showFortune()">사주 보기</button>
+
+    <div class="result" id="result">
+      <div class="fortune-title">✨ 오늘의 사주 결과</div>
+
+      <div id="tags"></div>
+
+      <p id="fortuneText"></p>
+    </div>
+  </div>
+
+  <script>
+    function showFortune(){
+
+      const name = document.getElementById('name').value;
+      const birth = document.getElementById('birth').value;
+      const gender = document.getElementById('gender').value;
+
+      if(!name || !birth){
+        alert('이름과 생년월일을 입력해주세요!');
+        return;
+      }
+
+      const fortunes = [
+        "강한 추진력을 가진 사주입니다. 올해는 새로운 도전에서 좋은 기회가 들어옵니다.",
+        "사람들과의 인연운이 강합니다. 인간관계에서 뜻밖의 행운이 찾아올 수 있습니다.",
+        "금전운이 상승하는 흐름입니다. 작은 기회를 잘 잡으면 큰 성과로 이어집니다.",
+        "감정 기복이 있지만 예술적 감각과 창의성이 뛰어난 타입입니다.",
+        "꾸준함이 강점인 사주입니다. 늦게 성공하지만 크게 안정되는 운입니다.",
+        "리더십이 강하며 주변 사람들에게 영향력을 주는 기운이 있습니다."
+      ];
+
+      const luckyColors = [
+        "💙 파란색",
+        "❤️ 빨간색",
+        "💚 초록색",
+        "🖤 검정색",
+        "💛 노란색"
+      ];
+
+      const luckyItems = [
+        "반지",
+        "향수",
+        "노트",
+        "시계",
+        "이어폰"
+      ];
+
+      const randomFortune =
+        fortunes[Math.floor(Math.random() * fortunes.length)];
+
+      const randomColor =
+        luckyColors[Math.floor(Math.random() * luckyColors.length)];
+
+      const randomItem =
+        luckyItems[Math.floor(Math.random() * luckyItems.length)];
+
+      document.getElementById('result').style.display = 'block';
+
+      document.getElementById('tags').innerHTML = `
+        <span class="tag">${gender}</span>
+        <span class="tag">행운의 색: ${randomColor}</span>
+        <span class="tag">행운의 아이템: ${randomItem}</span>
+      `;
+
+      document.getElementById('fortuneText').innerHTML = `
+        <b>${name}</b>님의 사주를 분석한 결과,<br><br>
+        ${randomFortune}<br><br>
+        올해는 특히 인간관계와 자기계발에 집중하면 좋은 흐름을 탈 가능성이 높습니다.
+      `;
+    }
+  </script>
+
 </body>
 </html>
