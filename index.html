@@ -6,32 +6,75 @@
   <title>AI 사주 보기</title>
 
   <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg,#1e1b4b,#312e81,#0f172a);
+      --container-bg: rgba(255,255,255,0.08);
+      --text-color: white;
+      --input-bg: rgba(255,255,255,0.1);
+      --border-color: rgba(255,255,255,0.15);
+      --placeholder-color: rgba(255,255,255,0.5);
+      --tag-bg: rgba(255,255,255,0.12);
+      --shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+
+    [data-theme="light"] {
+      --bg-gradient: linear-gradient(135deg,#f3f4f6,#e5e7eb,#d1d5db);
+      --container-bg: rgba(255,255,255,0.9);
+      --text-color: #1f2937;
+      --input-bg: rgba(0,0,0,0.05);
+      --border-color: rgba(0,0,0,0.1);
+      --placeholder-color: rgba(0,0,0,0.4);
+      --tag-bg: rgba(0,0,0,0.08);
+      --shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
     *{
       margin:0;
       padding:0;
       box-sizing:border-box;
       font-family:'Pretendard', sans-serif;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
     }
 
     body{
-      background: linear-gradient(135deg,#1e1b4b,#312e81,#0f172a);
+      background: var(--bg-gradient);
       min-height:100vh;
       display:flex;
       justify-content:center;
       align-items:center;
-      color:white;
+      color: var(--text-color);
       padding:30px;
     }
 
     .container{
       width:100%;
       max-width:520px;
-      background:rgba(255,255,255,0.08);
+      background: var(--container-bg);
       backdrop-filter: blur(12px);
-      border:1px solid rgba(255,255,255,0.15);
+      border:1px solid var(--border-color);
       border-radius:24px;
       padding:32px;
-      box-shadow:0 10px 40px rgba(0,0,0,0.4);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-top: 0;
     }
 
     h1{
@@ -61,19 +104,19 @@
     input, select{
       width:100%;
       padding:14px;
-      border:none;
+      border:1px solid var(--border-color);
       border-radius:14px;
-      background:rgba(255,255,255,0.1);
-      color:white;
+      background: var(--input-bg);
+      color: var(--text-color);
       font-size:15px;
       outline:none;
     }
 
     input::placeholder{
-      color:rgba(255,255,255,0.5);
+      color: var(--placeholder-color);
     }
 
-    button{
+    button.main-btn{
       width:100%;
       padding:16px;
       border:none;
@@ -87,25 +130,30 @@
       margin-top:10px;
     }
 
-    button:hover{
+    button.main-btn:hover{
       transform:translateY(-2px);
       opacity:0.95;
     }
 
     .result{
       margin-top:28px;
-      background:rgba(255,255,255,0.08);
+      background: var(--container-bg);
       padding:22px;
       border-radius:18px;
       line-height:1.8;
       display:none;
       animation:fade 0.5s ease;
+      border: 1px solid var(--border-color);
     }
 
     .fortune-title{
       font-size:22px;
       margin-bottom:14px;
       color:#fcd34d;
+    }
+
+    [data-theme="light"] .fortune-title {
+      color: #b45309;
     }
 
     @keyframes fade{
@@ -123,7 +171,7 @@
       display:inline-block;
       padding:6px 12px;
       border-radius:999px;
-      background:rgba(255,255,255,0.12);
+      background: var(--tag-bg);
       margin:4px;
       font-size:13px;
     }
@@ -133,6 +181,7 @@
 <body>
 
   <div class="container">
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
     <h1>🔮 AI 사주 보기</h1>
     <p class="subtitle">생년월일을 입력하면 간단한 운세를 알려드립니다</p>
 
@@ -154,7 +203,7 @@
       </select>
     </div>
 
-    <button onclick="showFortune()">사주 보기</button>
+    <button class="main-btn" onclick="showFortune()">사주 보기</button>
 
     <div class="result" id="result">
       <div class="fortune-title">✨ 오늘의 사주 결과</div>
@@ -166,15 +215,32 @@
   </div>
 
   <script>
+    // Theme switching logic
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcon(savedTheme);
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon(newTheme);
+    }
+
+    function updateThemeIcon(theme) {
+      const themeBtn = document.getElementById('theme-btn');
+      themeBtn.innerText = theme === 'dark' ? '🌙' : '☀️';
+    }
+
+    initTheme();
+
     function showFortune(){
 
       const name = document.getElementById('name').value;
-      const birth = document.getElementById('birth').value;
-      const gender = document.getElementById('gender').value;
-
-      if(!name || !birth){
-        alert('이름과 생년월일을 입력해주세요!');
-        return;
       }
 
       const fortunes = [
